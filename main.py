@@ -50,7 +50,7 @@ def delete_all_rules(rules):
 client = TwitterStream(BEARER_TOKEN)
 rules = client.get_rules()
 delete_all_rules(rules)
-client.add_rules(tweepy.StreamRule(value="-is:retweet -is:quote -has:media lang:en (china OR asia)"))
+client.add_rules(tweepy.StreamRule(value="-is:retweet -is:quote -has:media lang:en (☠)"))
 client.filter()
 
 csvFile = open("tweets.csv", "a")
