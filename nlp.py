@@ -4,6 +4,7 @@ import re
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize.casual import TweetTokenizer
+from nltk.stem import WordNetLemmatizer
 import string
 
 stop_word = set(stopwords.words('english'))
@@ -20,9 +21,11 @@ for i in range (len(tt)):
 
 # print('Tweet: ', tt)
 t = TweetTokenizer()
+lemmatizer = WordNetLemmatizer()
 for i in tt:
     # sentence = nltk.sent_tokenize(i)
     # dont tokenize emojis right  
     # word = nltk.word_tokenize(i)
     word = t.tokenize(i)
-    print(word)
+    lemma_word = [lemmatizer.lemmatize(x) for x in word]
+    print(lemma_word)
