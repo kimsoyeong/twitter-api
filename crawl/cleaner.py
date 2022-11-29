@@ -4,6 +4,8 @@ from profanity_filter import ProfanityFilter
 
 class TweetCleaner:
     def __init__(self):
+        # You need to install 'en' package to use ProfanityFilter
+        # put "python -m spacy download en" in your terminal
         self.pf = ProfanityFilter(languages=['en'])
 
     def clean_tweet(self, tweet):
@@ -25,7 +27,7 @@ class TweetCleaner:
         cs = self.pf.censor(s)  # check hate words
         cs = cs.split()
         s = s.split()
-        hates = []
+        hates = [] # hate words in a tweet
         for i in range(len(cs)):
             if '*' in cs[i]:
                 hates.append(s[i])
