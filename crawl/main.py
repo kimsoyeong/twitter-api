@@ -15,10 +15,10 @@ twitter_api = twitter.Api(consumer_key=API_KEY,
                           access_token_key=ACCESS_TOKEN,
                           access_token_secret=ACCESS_TOKEN_SECRET)
 
-query = "-is:quote lang:en (🍆 OR nigga OR #BlackLivesMatter)"
+query = "-is:quote lang:en (nigga OR #BlackLivesMatter OR paki OR ching)"
 
 # #Atlantaprotest #BLM #ChangeTheSystem #JusticeForGeorgeFloyd #BlueLivesMatter
-search = twitter_api.GetSearch(term=query, count=100)
+search = twitter_api.GetSearch(term=query, count=200)
 
 # collect data
 tweets = []
