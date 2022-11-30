@@ -2,4 +2,5 @@ twitter_api.py
 .idea/
 .idea/misc.xml
 .idea/nlp.iml
+*.pyc
 __pycache__/
