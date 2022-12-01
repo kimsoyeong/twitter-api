@@ -10,8 +10,8 @@ class TweetCleaner:
         self.pf = ProfanityFilter(languages=['en'])
 
     def clean_tweet(self, tweet):
-        s = re.sub("@[A-Za-z0-9_]+", "", tweet)  # remove usertags
-        s = re.sub("#[A-Za-z0-9_]+", "", s)  # remove hashtags
+        s = re.sub("@[A-Za-z0-9_]+", "@USER", tweet)  # remove usertags
+        # s = re.sub("#[A-Za-z0-9_]+", "", s)  # remove hashtags
 
         if "RT : " in s:
             s = re.sub("RT : ", "", s)
@@ -38,5 +38,5 @@ class TweetCleaner:
                 hates.append(s[i])
 
         cs = [w.strip() for w in cs if not w in self.stopwords]
-
-        return " ".join(word for word in cs), hates, emojis
+        s = [w.strip() for w in s]
+        return " ".join(s), hates, emojis

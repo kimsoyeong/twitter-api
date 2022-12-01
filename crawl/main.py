@@ -15,30 +15,36 @@ twitter_api = twitter.Api(consumer_key=API_KEY,
                           access_token_key=ACCESS_TOKEN,
                           access_token_secret=ACCESS_TOKEN_SECRET)
 
-query = "-is:quote lang:en (nigga OR #BlackLivesMatter OR paki OR ching)"
+if __name__ == "__main__":
+    queries = ["🔪 -🍎", "☠ OR 💀", "🙈", "🤬",
+               "#BlackLivesMatter OR #BLM",
+               "#hatechinese OR #worldhatechina",
+               "anti black", "anti muslim"]
+    base_query = "-is:quote lang:en"
 
-# #Atlantaprotest #BLM #ChangeTheSystem #JusticeForGeorgeFloyd #BlueLivesMatter
-search = twitter_api.GetSearch(term=query, count=200)
+    csvFile = open("./tweets-new.csv", "a")
+    csvWriter = csv.writer(csvFile)
 
-# collect data
-tweets = []
-for tweet in search:
-    # print(tweet.text.strip())
-    tmp = re.sub("\n", "", tweet.text.strip())
-    tmp = re.sub(",", " ", tmp)
-    tweets.append(tmp)
+    csvWriter.writerow(['tweet', 'label', 'hate_words', 'emojis'])
 
-TC = TweetCleaner()
-csvFile = open("./tweets.csv", "a")
-csvWriter = csv.writer(csvFile)
+    for q in queries:
+        search = twitter_api.GetSearch(term=f'{base_query} {q}', count=100)
 
-csvWriter.writerow(['tweet', 'label', 'hate_words', 'emojis'])
-for tweet in tweets:
-    ct, hashtags, emojis = TC.clean_tweet(tweet)
-    if "*" in ct:
-        csvWriter.writerow([tweet, 1, hashtags, emojis])
-    else:
-        csvWriter.writerow([tweet, 0, hashtags, emojis])
+        # collect data
+        tweets = []
+        for tweet in search:
+            tmp = re.sub("\n", "", tweet.text.strip())
+            tmp = re.sub(",", " ", tmp)
+            tweets.append(tmp)
 
-csvFile.close()
-print("Collection Done")
+        TC = TweetCleaner()
+
+        for tweet in tweets:
+            cleaned_tweet, hates, emojis = TC.clean_tweet(tweet)
+            if len(hates) > 0:
+                csvWriter.writerow([cleaned_tweet, 1, hates, emojis])
+            else:
+                csvWriter.writerow([cleaned_tweet, 0, hates, emojis])
+
+    csvFile.close()
+    print("Collection Done")
