@@ -16,7 +16,7 @@ twitter_api = twitter.Api(consumer_key=API_KEY,
                           access_token_secret=ACCESS_TOKEN_SECRET)
 
 if __name__ == "__main__":
-    queries = ["🔪 -🍎", "☠ OR 💀", "🙈", "🤬",
+    queries = ["🔪 -🍎", "☠ OR 💀", "🙈", "🤬", "💩",
                "#BlackLivesMatter OR #BLM",
                "#hatechinese OR #worldhatechina",
                "anti black", "anti muslim"]
