@@ -6,3 +6,4 @@ twitter_api.py
 __pycache__/
 *.png
 *.h5
+.ipynb_checkpoints/
