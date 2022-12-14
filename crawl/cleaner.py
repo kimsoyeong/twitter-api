@@ -59,8 +59,7 @@ class TweetCleaner:
 # Define the regular expression
 
 
-        # emojis = re.findall("\U000{...}")
-        print(emojis)
+        # print(emojis)
         # s = re.sub("[^a-z0-9]", " ", s) # remove emojis
 
         cs = self.pf.censor(s)  # check hate words
