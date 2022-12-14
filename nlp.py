@@ -77,4 +77,5 @@ model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 history = model.fit(X_data, Y_data, epochs=15, callbacks=[es, mc], batch_size=100, validation_split=0.2)
 
 GRU_model = load_model('best_model_GRU.h5')
+
 print("\n Test accuracy: %.4f" % (GRU_model.evaluate(X_test, Y_test)[1]))
