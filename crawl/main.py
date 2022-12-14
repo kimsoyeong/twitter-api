@@ -22,7 +22,7 @@ if __name__ == "__main__":
                "anti black", "anti muslim"]
     base_query = "-is:quote lang:en"
 
-    csvFile = open("./tweets-new-1.csv", "a")
+    csvFile = open("./tweettsBLM-new.csv", "a")
     csvWriter = csv.writer(csvFile)
 
     csvWriter.writerow(['tweet', 'label', 'hate_words', 'emojis'])
