@@ -5,4 +5,4 @@ twitter_api.py
 *.pyc
 __pycache__/
 *.png
-best_model_GRU.h5
+*.h5
