@@ -32,4 +32,10 @@ def remove_column():
     # write the data to a new dataset
     df.to_csv("data-no-hateword.csv", index=False)
 
-remove_column()
+def no_duplicate():
+    # read file
+    df = pd.read_csv("data-no-hateword.csv")
+    # remove duplicated lines
+    df = df.drop_duplicates()
+    # write the data to a new dataset
+    df.to_csv("data-no-dupl.csv", index=False)
