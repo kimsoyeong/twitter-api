@@ -25,7 +25,7 @@ class DataPreprocessor:
         self.tokenizer = TweetTokenizer(reduce_len=True)
         self.lemmatizer = WordNetLemmatizer()
         
-        self.regex = "RT (@[A-Za-z0-9_]+)|(@[A-Za-z0-9_]+)|https\S+|http\S+|(?<!\d)[.,;:!?](?!\d)"
+        self.regex = "RT (@[A-Za-z0-9_]+)|(@[A-Za-z0-9_]+)|#|https\S+|http\S+|(?<!\d)[.,;:!?](?!\d)"
         self.emoji_dict = None
         self.stop_word = None
         
@@ -75,10 +75,12 @@ class DataPreprocessor:
         return combined_vec # preprocessed data
     
 dp = DataPreprocessor()
+
 data = pd.read_csv('crawl/data.csv')
+data['tweet'] = data['tweet'].str.replace(dp.regex, "")
+data['tweet'] = data['tweet']
 
 combined_vec = dp.preprocess(data)
-
 
 
 from sklearn.model_selection import train_test_split
@@ -97,115 +99,115 @@ target_data = data['label']
 
 reg_coeff = 0.01
 
-model = Sequential()
+# model = Sequential()
 
-# Get the unique words in the input data
-combined_vec_matrix = hstack(combined_vec)
-input_data_array = combined_vec_matrix.toarray()
-X_train, X_test, y_train, y_test = train_test_split(input_data_array, target_data, test_size=0.2, random_state=42)
+# # Get the unique words in the input data
+# combined_vec_matrix = hstack(combined_vec)
+# input_data_array = combined_vec_matrix.toarray()
+# X_train, X_test, y_train, y_test = train_test_split(input_data_array, target_data, test_size=0.2, random_state=42)
 
-# Further try
-# # Split the data into train and test sets
-# X_train, X_test, y_train, y_test = train_test_split(input_data, target_data, test_size=0.2, random_state=42)
+# # Further try
+# # # Split the data into train and test sets
+# # X_train, X_test, y_train, y_test = train_test_split(input_data, target_data, test_size=0.2, random_state=42)
 
-# # Split the train data into train and validation sets
-# X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
-
-
-unique_words = np.unique(X_train)
-
-vocab_size = len(unique_words) + 1
-
-# Set the total_cnt parameter in the Embedding layer
-model.add(Embedding(vocab_size, output_dim=100))
-model.add(GRU(128))
-model.add(Dense(1, activation='sigmoid',
-                kernel_regularizer=regularizers.l1(reg_coeff), 
-                bias_regularizer=regularizers.l2(reg_coeff)))
-
-es_l = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=4)
-es_a = EarlyStopping(monitor='val_acc', mode='max', verbose=1, patience=4)
-mc = ModelCheckpoint('best_GRU.h5', monitor='val_acc', mode='max', verbose=1, save_best_only=True)
-
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['acc'])
+# # # Split the train data into train and validation sets
+# # X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
 
 
-history = model.fit(X_train, y_train, 
-          batch_size=64,
-          epochs=20, 
-          verbose=1,
-          validation_split=0.2, 
-          callbacks=[es_l, es_a, mc])
+# unique_words = np.unique(X_train)
+
+# vocab_size = len(unique_words) + 1
+
+# # Set the total_cnt parameter in the Embedding layer
+# model.add(Embedding(vocab_size, output_dim=100))
+# model.add(GRU(128))
+# model.add(Dense(1, activation='sigmoid',
+#                 kernel_regularizer=regularizers.l1(reg_coeff), 
+#                 bias_regularizer=regularizers.l2(reg_coeff)))
+
+# es_l = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=4)
+# es_a = EarlyStopping(monitor='val_acc', mode='max', verbose=1, patience=4)
+# mc = ModelCheckpoint('best_GRU.h5', monitor='val_acc', mode='max', verbose=1, save_best_only=True)
+
+# model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['acc'])
 
 
-perf = model.evaluate(X_test, y_test)
-
-print('Test loss: %.4f' % perf[0])
-print('Test accuracy: %.2f' % (perf[1]*100))
-
-
-# KFold
-
-
-reg_coeff = 0.01
-
-model = Sequential()
-
-# Get the unique words in the input data
-combined_vec_matrix = hstack(combined_vec)
-
-non_zero_elements = combined_vec_matrix.count_nonzero()
-
-vocab_size = non_zero_elements + 1
-
-# Set the total_cnt parameter in the Embedding layer
-model.add(Embedding(vocab_size, output_dim=100))
-model.add(GRU(128))
-model.add(Dense(1, activation='sigmoid',
-                kernel_regularizer=regularizers.l1(reg_coeff), 
-                bias_regularizer=regularizers.l2(reg_coeff)))
-
-es_l = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=4)
-es_a = EarlyStopping(monitor='val_accuracy', mode='max', verbose=1, patience=4)
-mc = ModelCheckpoint('best_GRU.h5', monitor='val_accuracy', mode='max', verbose=1, save_best_only=True)
+# history = model.fit(X_train, y_train, 
+#           batch_size=10,
+#           epochs=20, 
+#           verbose=1,
+#           validation_split=0.2, 
+#           callbacks=[es_l, es_a, mc])
 
 
-# In[ ]:
+# perf = model.evaluate(X_test, y_test)
+
+# print('Test loss: %.4f' % perf[0])
+# print('Test accuracy: %.2f' % (perf[1]*100))
 
 
-# Import the KFold class
-from sklearn.model_selection import KFold
+# # KFold
 
-# Create a KFold object with 5 folds
-kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
-X = combined_vec_matrix.toarray()
-y = target_data
+# reg_coeff = 0.01
 
-# Loop through the folds
-for train_index, val_index in kf.split(X):
-    # Get the training and validation data for this fold
-    X_train_fold, X_val_fold = X[train_index], X[val_index]
-    y_train_fold, y_val_fold = y[train_index], y[val_index]
+# model = Sequential()
+
+# # Get the unique words in the input data
+# combined_vec_matrix = hstack(combined_vec)
+
+# non_zero_elements = combined_vec_matrix.count_nonzero()
+
+# vocab_size = non_zero_elements + 1
+
+# # Set the total_cnt parameter in the Embedding layer
+# model.add(Embedding(vocab_size, output_dim=100))
+# model.add(GRU(128))
+# model.add(Dense(1, activation='sigmoid',
+#                 kernel_regularizer=regularizers.l1(reg_coeff), 
+#                 bias_regularizer=regularizers.l2(reg_coeff)))
+
+# es_l = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=4)
+# es_a = EarlyStopping(monitor='val_accuracy', mode='max', verbose=1, patience=4)
+# mc = ModelCheckpoint('best_GRU.h5', monitor='val_accuracy', mode='max', verbose=1, save_best_only=True)
+
+
+# # In[ ]:
+
+
+# # Import the KFold class
+# from sklearn.model_selection import KFold
+
+# # Create a KFold object with 5 folds
+# kf = KFold(n_splits=5, shuffle=True, random_state=42)
+
+# X = combined_vec_matrix.toarray()
+# y = target_data
+
+# # Loop through the folds
+# for train_index, val_index in kf.split(X):
+#     # Get the training and validation data for this fold
+#     X_train_fold, X_val_fold = X[train_index], X[val_index]
+#     y_train_fold, y_val_fold = y[train_index], y[val_index]
     
-    # Compile and train the model
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-    model.fit(X_train_fold, y_train_fold, 
-              batch_size=32, 
-              epochs=5, 
-              verbose=1,
-              validation_split=0.2,
-              callbacks=[es_l, es_a, mc])
+#     # Compile and train the model
+#     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+#     model.fit(X_train_fold, y_train_fold, 
+#               batch_size=32, 
+#               epochs=5, 
+#               verbose=1,
+#               validation_split=0.2,
+#               callbacks=[es_l, es_a, mc])
     
-    # Evaluate the model on the validation data for this fold
-    val_loss, val_acc = model.evaluate(X_val_fold, y_val_fold, verbose=0)
-    print(f'Fold val_loss: {val_loss:.3f}, val_acc: {val_acc:.3f}')
+#     # Evaluate the model on the validation data for this fold
+#     val_loss, val_acc = model.evaluate(X_val_fold, y_val_fold, verbose=0)
+#     print(f'Fold val_loss: {val_loss:.3f}, val_acc: {val_acc:.3f}')
 
 
-# In[ ]:
+# # In[ ]:
 
 
-perf = model.evaluate(X_test, y_test)
+# perf = model.evaluate(X_test, y_test)
 
-print('Test loss: %.4f' % perf[0])
-print('Test accuracy: %.2f' % (perf[1]*100))
+# print('Test loss: %.4f' % perf[0])
+# print('Test accuracy: %.2f' % (perf[1]*100))
