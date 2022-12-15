@@ -29,7 +29,7 @@ class DataPreprocessor:
         self.emoji_dict = None
         self.stop_word = None
         
-        self.tweet_vec = CountVectorizer(tokenizer=self.tokenize)
+        self.tweet_vec = CountVectorizer(tokenizer=self.tokenize_lemmatize)
         self.emoji_vec = CountVectorizer()
         
         self.make_stop_word()
@@ -39,9 +39,18 @@ class DataPreprocessor:
         stop_word_symbol = {"…", "’", ":", '"', '-', '️', '&', '“', '(', '/', "'", ";", "+", "*", "~"}
         self.stop_word.update(stop_word_symbol)
     
-    def tokenize(self, text): # tokenize the tweets
+    # def tokenize(self, text): # tokenize the tweets
+    #     tknzr = TweetTokenizer()
+    #     return tknzr.tokenize(text)
+
+    def tokenize_lemmatize(self, text): # tokenize the tweets
         tknzr = TweetTokenizer()
-        return tknzr.tokenize(text)
+        tokens= tknzr.tokenize(text)
+        lemmatzr = WordNetLemmatizer()
+
+        lemmas = [lemmatzr.lemmatize(token) for token in tokens if token not in stop_word]
+
+        return [lemma.lower() for lemma in lemmas]
     
     def vectorize(self, data):      
         # Fit the vectorizer on the 'tweet' column
