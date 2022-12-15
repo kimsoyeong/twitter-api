@@ -48,7 +48,7 @@ class DataPreprocessor:
         tokens= tknzr.tokenize(text)
         lemmatzr = WordNetLemmatizer()
 
-        lemmas = [lemmatzr.lemmatize(token) for token in tokens if token not in stop_word]
+        lemmas = [lemmatzr.lemmatize(token) for token in tokens if token not in self.stop_word]
 
         return [lemma.lower() for lemma in lemmas]
     
