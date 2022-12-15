@@ -24,4 +24,12 @@ def remove():
     # write the data to a new dataset
     df.to_csv("data-rm.csv", index=False)
 
-remove()
+def remove_column():
+    # read file
+    df = pd.read_csv("data.csv")
+    # remove a column
+    df.drop('hate_words', inplace=True, axis=1)
+    # write the data to a new dataset
+    df.to_csv("data-no-hateword.csv", index=False)
+
+remove_column()
